@@ -1,28 +1,61 @@
-import React from 'react'
-import { useContext, useState } from 'react'
-import { ShopContext } from '../context/ShopContext'
-import axios from 'axios'
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ShopContext } from "../context/ShopContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const [currentState, setCurrentState] = useState("Login");
+  const { setToken, backendUrl } = useContext(ShopContext);
+  const navigate = useNavigate();
 
-  const [currentState, setCurrentState] = useState('Sign up')
-  const { token, setToken, navigate, backendUrl } = useContext(ShopContext)
-  
-  const[name,setName] = useState('')
-  const [password, setPassword] = useState('')  
-  const[email,setEmail] = useState('')
-  
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      if (currentState === 'Sign Up') {
-        const response = await axios.post(backendUrl + '/api/user/register', { name, email, password });
-        console.log(response.data)
+      if (currentState === "Sign Up") {
+        const response = await axios.post(`${backendUrl}/api/user/register`, {
+          name,
+          email,
+          password,
+        });
+
+        if (response.data.success) {
+          const token = response.data.token;
+          setToken(token);
+          localStorage.setItem("token", token);
+          toast.success("Account created successfully!");
+          navigate("/");
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        const response = await axios.post(`${backendUrl}/api/user/login`, {
+          email,
+          password,
+        });
+
+        if (response.data.success) {
+          const token = response.data.token;
+          setToken(token);
+          localStorage.setItem("token", token);
+          toast.success("Login successful!");
+          navigate("/");
+        } else {
+          toast.error(response.data.message);
+        }
       }
     } catch (error) {
-      
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong!");
     }
-  }
+  };
+
+
+
   return (
     <form
       onSubmit={onSubmitHandler}
@@ -32,9 +65,8 @@ const Login = () => {
         <p className="prata-regular text-3xl">{currentState}</p>
         <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
       </div>
-      {currentState === "Login" ? (
-        ""
-      ) : (
+
+      {currentState === "Login" ? null : (
         <input
           onChange={(e) => setName(e.target.value)}
           value={name}
@@ -44,6 +76,7 @@ const Login = () => {
           required
         />
       )}
+
       <input
         onChange={(e) => setEmail(e.target.value)}
         value={email}
@@ -52,6 +85,7 @@ const Login = () => {
         placeholder="Email"
         required
       />
+
       <input
         onChange={(e) => setPassword(e.target.value)}
         value={password}
@@ -60,7 +94,8 @@ const Login = () => {
         placeholder="Password"
         required
       />
-      <div className="w-full flex justify-between text-sm mt-[-8px">
+
+      <div className="w-full flex justify-between text-sm mt-[-8px]">
         <p className="cursor-pointer">Forget Your Password?</p>
         {currentState === "Login" ? (
           <p
@@ -78,11 +113,12 @@ const Login = () => {
           </p>
         )}
       </div>
+
       <button className="bg-black text-white font-light px-8 py-2 mt-4">
         {currentState === "Login" ? "Sign In" : "Sign Up"}
       </button>
     </form>
   );
-}
+};
 
-export default Login
+export default Login;

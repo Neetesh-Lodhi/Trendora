@@ -8,10 +8,16 @@ const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
 
   useEffect(() => {
-   
-    const bestProduct = products.filter((item) => (item.bestseller)); 
-    setBestSeller(bestProduct.slice(0, 5));
+    let bestProduct = products.filter((item) => item.bestseller === true);
+
+    // fallback if no bestseller products found
+    if (bestProduct.length === 0) {
+      bestProduct = products.slice(0, 5);
+    }
+
+    setBestSeller(bestProduct);
   }, [products]);
+
 
 
 

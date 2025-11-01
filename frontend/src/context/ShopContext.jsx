@@ -13,7 +13,9 @@ import axios from 'axios'
 const ShopContextProvider = (props) => {
      const currency = '$';
      const delivery_fee = 10;
-     const backendUrl = import.meta.env.VITE_BACKEND_URL
+     const backendUrl =
+       import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
      const [search, setSearch] = useState('')
      const [showSearch, setShowSearch] = useState(false)
      const [cartItems, setCartItems] = useState({})
@@ -100,7 +102,13 @@ const ShopContextProvider = (props) => {
      
      useEffect(() => {
        getProductsData();
-     },[]);
+     }, []);
+     
+     useEffect(() => {
+          if (!token && localStorage.getItem('token')) {
+               setToken(localStorage.getItem('token'))
+          }
+     })
 
           const value = {
             products,
@@ -114,6 +122,7 @@ const ShopContextProvider = (props) => {
                showSearch,
                setShowSearch,
                cartItems,
+               setCartItems,
                addToCart,
                getCartCount,
                updateQuantity,
