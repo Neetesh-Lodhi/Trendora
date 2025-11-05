@@ -2,8 +2,47 @@ import React from 'react'
 import { useContext } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import Title from '../components/Title'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 const Orders = () => {
-  const { products, currency } = useContext(ShopContext);
+  const { backendUrl, token, currency } = useContext(ShopContext);
+  
+  const [orderData, setOrderData] = useState([]);
+
+  const loadOrderData = async () => {
+    try {
+      if (!token) {
+          return null
+      }  
+      
+      const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: {token} })
+      if (response.data.success) {
+
+        let allOrdersItem = []
+        response.data.orders.map((order) => {
+          order.items.map((item) => {
+            item['status'] = order.status;
+            item['payment'] = order.payment
+            item['paymentMethod'] = order.paymentMethod
+            item['data'] = order.date
+            allOrdersItem.push(item)
+            })
+        })
+        setOrderData(allOrdersItem.reverse())
+      }
+
+
+    } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+  }
+
+  useEffect(() => {
+    loadOrderData();
+  },[token])
+
   return (
     <div className="border-t pt-16">
       <div className="text-2xl">
@@ -11,7 +50,7 @@ const Orders = () => {
       </div>
 
       <div>
-        {products.slice(1, 4).map((item, index) => (
+        {orderData.map((item, index) => (
           <div
             key={index}
             className="py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
@@ -28,7 +67,7 @@ const Orders = () => {
                   <p>Quantity: 1</p>
                   <p>Size: M</p>
                 </div>{" "}
-                {/* ✅ FIX 2: Properly closed this div */}
+                {/*  FIX 2: Properly closed this div */}
                 <p className="mt-2">
                   Date: <span className="text-gray-400">23, Sept, 2025</span>
                 </p>
@@ -41,7 +80,7 @@ const Orders = () => {
               </div>
               <button className='border px-4 py-2 text-sm font-medium rounded-sm '>Track Order</button>
             </div>
-          </div> // ✅ FIX 3: Properly close the map item container
+          </div> //  FIX 3: Properly close the map item container
         ))}
       </div>
     </div>
