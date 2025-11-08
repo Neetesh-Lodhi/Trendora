@@ -29,7 +29,7 @@ const PlaceOrder = () => {
     phone: "",
   });
 
-  // 🔹 Handle input field changes
+  //  Handle form field changes
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
@@ -38,71 +38,89 @@ const PlaceOrder = () => {
     }));
   };
 
-  // 🔹 Handle form submit
+  //  Handle order placement
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
     try {
       let orderItems = [];
 
-      // Loop through cartItems properly
       for (const productId in cartItems) {
         const sizes = cartItems[productId];
         for (const size in sizes) {
           if (sizes[size] > 0) {
             const product = products.find((p) => p._id === productId);
             if (product) {
-              const itemInfo = {
+              orderItems.push({
                 ...product,
-                size: size,
+                size,
                 quantity: sizes[size],
-              };
-              orderItems.push(itemInfo);
+              });
             }
           }
         }
       }
 
-      console.log("🛍️ Final Order Items:", orderItems);
-
-      //  Prepare order data to send
       const orderData = {
         address: formData,
         items: orderItems,
         amount: getCartAmount() + delivery_fee,
-        paymentMethod: method,
       };
 
-      console.log("📦 Order Data:", orderData);
+      //  Stripe Payment
+      if (method === "stripe") {
+        const res = await fetch(`${backendUrl}/api/order/stripe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+          body: JSON.stringify(orderData),
+        });
 
-      //  Make API call (example endpoint)
-      const res = await fetch(`${backendUrl}/api/order/place`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          token: token,
-        },
-        body: JSON.stringify(orderData),
-      });
+        const data = await res.json();
+        if (data.success) {
+          window.location.replace(data.session_url); // Redirect to Stripe Checkout
+        } else {
+          alert("❌ Stripe order failed: " + data.message);
+        }
+      }
 
-      const data = await res.json();
-      if (data.success) {
-        alert(" Order placed successfully!");
-        setCartItems({});
-        navigate("/orders");
-      } else {
-        alert("❌ " + data.message);
+      //  COD Payment
+      else if (method === "cod") {
+        const res = await fetch(`${backendUrl}/api/order/place`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            token: token,
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert(" Order placed successfully!");
+          setCartItems({});
+          navigate("/orders");
+        } else {
+          alert("❌ " + data.message);
+        }
+      }
+
+      //  Razorpay (future implementation)
+      else if (method === "razorpay") {
+        alert("🛠 Razorpay integration coming soon!");
       }
     } catch (error) {
       console.error("Order placement failed:", error);
-      alert("Something went wrong. Please try again.");
+      alert("⚠️ Something went wrong. Please try again.");
     }
   };
 
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-top"
+      className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh]"
     >
       {/* ------------Left side----------- */}
       <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
@@ -131,6 +149,7 @@ const PlaceOrder = () => {
             placeholder="Last name"
           />
         </div>
+
         <input
           required
           onChange={onChangeHandler}
@@ -140,6 +159,7 @@ const PlaceOrder = () => {
           type="email"
           placeholder="Email address"
         />
+
         <input
           required
           onChange={onChangeHandler}
@@ -149,6 +169,7 @@ const PlaceOrder = () => {
           type="text"
           placeholder="Street"
         />
+
         <div className="flex gap-3">
           <input
             required
@@ -169,6 +190,7 @@ const PlaceOrder = () => {
             placeholder="State"
           />
         </div>
+
         <div className="flex gap-3">
           <input
             required
@@ -189,6 +211,7 @@ const PlaceOrder = () => {
             placeholder="Country"
           />
         </div>
+
         <input
           required
           onChange={onChangeHandler}
@@ -208,6 +231,7 @@ const PlaceOrder = () => {
 
         <div className="mt-12">
           <Title text1={"PAYMENT"} text2={"METHOD"} />
+
           <div className="flex gap-3 flex-col lg:flex-row">
             {/* Stripe */}
             <div
@@ -219,7 +243,7 @@ const PlaceOrder = () => {
                   method === "stripe" ? "bg-green-400" : ""
                 }`}
               ></p>
-              <img className="h-5 mx-4" src={assets.stripe_logo} alt="" />
+              <img className="h-5 mx-4" src={assets.stripe_logo} alt="Stripe" />
             </div>
 
             {/* Razorpay */}
@@ -232,7 +256,11 @@ const PlaceOrder = () => {
                   method === "razorpay" ? "bg-green-400" : ""
                 }`}
               ></p>
-              <img className="h-5 mx-4" src={assets.razorpay_logo} alt="" />
+              <img
+                className="h-5 mx-4"
+                src={assets.razorpay_logo}
+                alt="Razorpay"
+              />
             </div>
 
             {/* COD */}
