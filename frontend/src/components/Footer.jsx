@@ -1,38 +1,74 @@
 import React from "react";
 import { assets } from "../assets/assets";
+
 const Footer = () => {
   return (
-    <div className="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-40 text-sm">
-      <div>
-        <img src={assets.logo} alt="" className="mb-5 w-32" />
-        <p className="w-full md:w-2/3 text-gray-600">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-          quae.
-        </p>
+    <footer className="bg-gradient-to-b from-gray-50 via-white to-gray-100 text-gray-700 mt-32 pt-16 pb-8 px-6 sm:px-12 md:px-20">
+      {/* Main Footer Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 mb-10">
+        {/* Logo + About */}
+        <div className="flex flex-col items-center text-center">
+          {/* Logo */}
+          <img
+            src={assets.logo4}
+            alt="Trendora Logo"
+            className="w-44 sm:w-52 mb-5 object-contain drop-shadow-md hover:drop-shadow-xl transition-transform duration-500 hover:scale-110"
+          />
+
+          {/* About Text */}
+          <p className="text-gray-600 leading-relaxed text-sm sm:text-base max-w-md">
+            <span className="font-semibold text-gray-900">Trendora</span> is
+            your trusted fashion destination — bringing you the latest styles,
+            top-quality materials, and timeless collections that express your
+            unique personality.
+          </p>
+        </div>
+
+        {/* Company Links */}
+        <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 tracking-wide">
+            COMPANY
+          </h2>
+          <ul className="flex flex-col gap-2 text-gray-600 transition-all">
+            {["Home", "About Us", "Delivery", "Privacy Policy"].map(
+              (item, index) => (
+                <li
+                  key={index}
+                  className="cursor-pointer hover:text-black hover:translate-x-1 transition-all duration-300"
+                >
+                  {item}
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+
+        {/* Contact Info */}
+        <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-800 tracking-wide">
+            GET IN TOUCH
+          </h2>
+          <ul className="flex flex-col gap-2 text-gray-600 text-sm sm:text-base">
+            <li className="hover:text-black transition-all flex items-center gap-2">
+              <span className="text-lg">📞</span> +91 9905707561
+            </li>
+            <li className="hover:text-black transition-all flex items-center gap-2">
+              <span className="text-lg">📧</span> neeteshlodhi9555@gmail.com
+            </li>
+          </ul>
+        </div>
       </div>
-      <div>
-        <p className="text-xl font-medium mb-5">COMPANY</p>
-        <ul className="flex flex-col gap-1 text-gray-600">
-          <li>Home</li>
-          <li>About us</li>
-          <li>Delivery</li>
-          <li>Privacy Policy</li>
-        </ul>
-      </div>
-      <div>
-        <p className="text-xl font-medium mb-5 ">GET IN TOUCH</p>
-        <ul className="flex flex-col gap-1 text-gray-600">
-          <l1>+91-9905707561</l1>
-          <l1>neeteshlodhi9555@gmail.com</l1>
-        </ul>
-      </div>
-      <div>
-        <hr />
-        <p className='py-5 text-sm text-center'>
-          Copyright 2025@ forever.com - All Rights Reserved.
-        </p>
-      </div>
-    </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-300 my-6"></div>
+
+      {/* Copyright */}
+      <p className="text-center text-sm text-gray-500">
+        © {new Date().getFullYear()}{" "}
+        <span className="font-semibold text-gray-700">Trendora</span> — Crafted
+        with ❤️ by Neetesh Lodhi.
+      </p>
+    </footer>
   );
 };
 

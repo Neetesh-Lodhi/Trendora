@@ -1,107 +1,226 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { useContext } from "react";
 import { ShopContext } from "../context/ShopContext";
-import { useState } from "react";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
+import AIRecommendations from "../components/AIRecommendations";
+
+
+
+
+
 
 const Product = () => {
   const { productId } = useParams();
-  const { products,currency,addToCart } = useContext(ShopContext);
-  const [productData, setProductData] = useState(false);
+  const { products, currency, addToCart } = useContext(ShopContext);
+  
+
+  const [productData, setProductData] = useState(null);
   const [image, setImage] = useState("");
-  const[size, setSize] = useState('')
+  const [size, setSize] = useState("");
+  const [activeTab, setActiveTab] = useState("description");
 
-  const fetchProductData = async () => {
-    products.map((item) => {
-      if (item._id === productId) {
-        setProductData(item);
-        setImage(item.image[0]);
  
-        return null;
-      }
-    });
-  };
 
+
+  // Fetch product details
   useEffect(() => {
-    fetchProductData();
+    const product = products.find((item) => item._id === productId);
+    if (product) {
+      setProductData(product);
+      setImage(product.image[0]);
+    }
   }, [productId, products]);
 
-  return productData ? (
-    <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
-      {/* ----------Product Data----------- */}
+  if (!productData) return <div className="opacity-0"></div>;
 
-      <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">
-        {/* --------Product Images-------- */}
-
+  return (
+    <div className="border-t pt-10 px-4 sm:px-8 lg:px-16 transition-opacity ease-in duration-500 opacity-100 bg-gray-50">
+      {/* ---------- Product Section ---------- */}
+      <div className="flex flex-col lg:flex-row gap-12 bg-white p-6 sm:p-10 rounded-2xl shadow-sm">
+        {/* ---------- Image Gallery ---------- */}
         <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
-          <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full">
+          <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll sm:w-[18%] w-full gap-3 sm:gap-0">
             {productData.image.map((item, index) => (
               <img
-                src={item}
                 key={index}
-                alt=""
-                className="w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer"
+                src={item}
+                alt={productData.name}
+                className={`w-[24%] sm:w-full sm:mb-3 rounded-lg cursor-pointer border ${
+                  item === image ? "border-black" : "border-transparent"
+                } transition`}
                 onClick={() => setImage(item)}
               />
             ))}
           </div>
-          <div className="w-full sm:w-[80%]">
-            <img className="w-full h-auto" src={image} alt="" />
+
+          <div className="w-full sm:w-[82%]">
+            <img
+              className="w-full h-auto rounded-xl border border-gray-200"
+              src={image}
+              alt={productData.name}
+            />
           </div>
         </div>
 
-        {/* --------Product Info-------- */}
-        <div className="flex-1">
-          <h1 className="font-medium text-2xl mt-2">{productData.name}</h1>
-          <div className="flex items-centre gap-1 mt-2">
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_icon} alt="" className="w-3 5" />
-            <img src={assets.star_dull_icon} alt="" className="w-3 5" />
-            <p className='pl-2'>(122)</p>
+        {/* ---------- Product Info ---------- */}
+        <div className="flex-1 flex flex-col justify-center">
+          <h1 className="font-semibold text-2xl md:text-3xl mb-3 text-gray-900">
+            {productData.name}
+          </h1>
+
+          {/* Ratings */}
+          <div className="flex items-center gap-1 mb-4">
+            {[...Array(4)].map((_, i) => (
+              <img key={i} src={assets.star_icon} alt="star" className="w-4" />
+            ))}
+            <img src={assets.star_dull_icon} alt="star" className="w-4" />
+            <p className="pl-2 text-gray-600 text-sm">(122 reviews)</p>
           </div>
-          <p className='mt-5 text-3xl font-medium'>{currency}{productData.price} </p>
-          <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
-          <div className='flex flex-col gap-4 my-8'>
-            <p>Select Size</p>
-            <div className='flex gap-2'>
-               {productData.sizes.map((item, index) => (
-                 <button onClick={() => setSize(item)} key={index} className={`border py-2 px-4 bg-gray-100 ${item === size ? 'border-orange-500' : ''} `}>{item}</button>
-               ))}
+
+          {/* Price */}
+          <p className="text-3xl font-medium text-gray-800">
+            {currency}
+            {productData.price}
+          </p>
+
+          {/* Description */}
+          <p className="mt-4 text-gray-600 text-sm md:text-base leading-relaxed">
+            {productData.description}
+          </p>
+
+          {/* Size Selection */}
+          <div className="flex flex-col gap-3 mt-8">
+            <p className="font-medium text-gray-700">Select Size</p>
+            <div className="flex flex-wrap gap-2">
+              {productData.sizes.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSize(item)}
+                  className={`border py-2 px-4 rounded-md text-sm font-medium transition ${
+                    item === size
+                      ? "border-black bg-black text-white"
+                      : "border-gray-300 bg-gray-100 hover:bg-gray-200"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
             </div>
           </div>
-          <button onClick={() => addToCart(productData._id, size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'> ADD TO CART </button>
-          <hr className='mt-8 sm:w-4/5' />
-          <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
-            <p>100% Original product.</p>
-            <p>Cash on delivery available on this product.</p>
-            <p>Easy return and exchange policy within 7 days.</p>
+
+          {/* Add to Cart */}
+          <button
+            onClick={() => addToCart(productData._id, size)}
+            className="mt-8 bg-black text-white px-10 py-3 rounded-md text-sm font-semibold hover:bg-gray-800 active:scale-95 transition"
+          >
+            ADD TO CART
+          </button>
+
+          {/* Additional Info */}
+          <hr className="mt-8 mb-5 sm:w-4/5 border-gray-300" />
+          <div className="text-sm text-gray-600 flex flex-col gap-1">
+            <p>✅ 100% Original product</p>
+            <p>💵 Cash on delivery available</p>
+            <p>↩️ Easy return and exchange policy within 7 days</p>
           </div>
         </div>
       </div>
 
-
-      {/* ------Description & Review Section-------*/}
-      <div className='mt-20'>
-        <div className='flex'>
-          <b className='border px-5 py-3 text-sm'>Description</b>
-          <p className='border px-5 py-3 text-sm'>Reviews (122)</p>
-
+      {/* ---------- Description & Reviews ---------- */}
+      <div className="mt-20 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Tabs */}
+        <div className="flex border-b bg-gray-50">
+          <button
+            onClick={() => setActiveTab("description")}
+            className={`flex-1 text-center py-3 text-base font-semibold transition ${
+              activeTab === "description"
+                ? "text-gray-900 border-b-2 border-black bg-white"
+                : "text-gray-600 hover:text-black hover:bg-gray-100"
+            }`}
+          >
+            Description
+          </button>
+          <button
+            onClick={() => setActiveTab("reviews")}
+            className={`flex-1 text-center py-3 text-base font-semibold transition ${
+              activeTab === "reviews"
+                ? "text-gray-900 border-b-2 border-black bg-white"
+                : "text-gray-600 hover:text-black hover:bg-gray-100"
+            }`}
+          >
+            Reviews (122)
+          </button>
         </div>
-        <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500 '>
-        <p>Trendora is an e-commerce online website where we can buy clothes for men women and kids so please visit </p>
-        <p>this website for more information about us and our services and products and also you can contact us </p>
+
+        {/* Tab Content */}
+        <div className="p-8 text-gray-700 text-[15px] leading-relaxed space-y-3">
+          {activeTab === "description" ? (
+            <>
+              <p>
+                <span className="font-medium text-gray-900">Trendora</span>{" "}
+                brings you a premium shopping experience with carefully curated
+                fashion pieces for men, women, and kids. Each product is crafted
+                with high-quality materials to match your comfort and style.
+              </p>
+              <p>
+                From casual wear to party outfits — our latest collection
+                ensures you stay trendy every season. Explore, express, and
+                enjoy fashion made just for you.
+              </p>
+              <p className="pt-2 text-sm text-gray-500 border-t mt-4">
+                Need help? Visit our{" "}
+                <span className="text-blue-600 cursor-pointer hover:underline">
+                  Contact Page
+                </span>{" "}
+                or check out our{" "}
+                <span className="text-blue-600 cursor-pointer hover:underline">
+                  FAQs
+                </span>
+                .
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-semibold text-gray-900">Customer Reviews</p>
+              <div className="flex items-center gap-1 mb-3">
+                {[...Array(4)].map((_, i) => (
+                  <img
+                    key={i}
+                    src={assets.star_icon}
+                    alt="star"
+                    className="w-4"
+                  />
+                ))}
+                <img src={assets.star_dull_icon} alt="star" className="w-4" />
+                <p className="pl-2 text-gray-600 text-sm">(4.2 / 5 average)</p>
+              </div>
+              <p className="text-gray-600">
+                “Loved the quality and the fit! Delivery was fast and packaging
+                was neat.”
+              </p>
+              <p className="text-gray-600">
+                “Great product for the price. Would definitely recommend to
+                friends.”
+              </p>
+            </>
+          )}
         </div>
       </div>
-      
-      {/*---------- Display related products -------- */}
-      <RelatedProducts category={productData.category} subCategory={productData.subCategory}/>
+
+      {/* ---------- Related Products ---------- */}
+      <div className="mt-20">
+        <RelatedProducts
+          category={productData.category}
+          subCategory={productData.subCategory}
+        />
+      </div>
+
+      {/* ---------- AI Recommendations ---------- */}
+      <div className="mt-20">
+        <AIRecommendations currentProduct={productData} />
+      </div>
     </div>
-  ) : (
-    <div className="opacity-0"></div>
   );
 };
 

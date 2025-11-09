@@ -7,6 +7,8 @@ import userRouter from './routes/userRoute.js'
 import productRouter from './routes/productRoute.js'
 import cartRouter from './routes/CartRoute.js'
 import orderRouter from './routes/OrderRoute.js'
+import router from "./routes/aiRoutes.js";
+
 
 
 //App Config
@@ -28,7 +30,13 @@ app.use(express.json())
 app.use("/api/user", userRouter)
 app.use('/api/product', productRouter)
 app.use('/api/cart', cartRouter)
-app.use('/api/order',orderRouter)
+app.use('/api/order', orderRouter)
+
+
+//Ai endpoint
+
+app.use("/api/ai", router);
+
 
 app.get("/", (req, res) => {
           res.send("API working")

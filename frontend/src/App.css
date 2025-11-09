@@ -1,23 +1,40 @@
+/* ===== Root Layout ===== */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-family: "Poppins", sans-serif;
+  background-color: #ffffff;
+  color: #1f1f1f;
 }
 
+/* ===== Utility Classes ===== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.section {
+  padding: 4rem 1rem;
+}
+
+/* ===== Logo Styling ===== */
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+  height: 5em;
+  transition: filter 300ms ease;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em rgba(100, 108, 255, 0.7));
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.7));
 }
 
+/* ===== Animation ===== */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -33,10 +50,26 @@
   }
 }
 
+/* ===== Card ===== */
 .card {
+  background: white;
+  border-radius: 1rem;
   padding: 2em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* ===== Footer ===== */
 .read-the-docs {
   color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2rem 0;
 }
+
+/* ===== Responsive Fixes ===== */
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1rem;
+  }
+}
+
