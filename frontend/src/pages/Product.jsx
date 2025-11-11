@@ -120,9 +120,36 @@ const Product = () => {
           {/* Additional Info */}
           <hr className="mt-8 mb-5 sm:w-4/5 border-gray-300" />
           <div className="text-sm text-gray-600 flex flex-col gap-1">
-            <p>✅ 100% Original product</p>
-            <p>💵 Cash on delivery available</p>
-            <p>↩️ Easy return and exchange policy within 7 days</p>
+            <div className="space-y-3 mt-4">
+              <p className="flex items-center gap-2">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/1040/1040230.png"
+                  alt="original"
+                  className="w-6 h-6"
+                />
+                <span className="text-gray-800 font-medium">
+                  100% Original Product
+                </span>
+              </p>
+
+              <p className="flex items-center gap-2">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/2331/2331942.png"
+                  alt="cash on delivery"
+                  className="w-6 h-6"
+                />
+                <span>Cash on Delivery Available</span>
+              </p>
+
+              <p className="flex items-center gap-2">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/992/992703.png"
+                  alt="return policy"
+                  className="w-6 h-6"
+                />
+                <span>Easy Return & Exchange Policy within 7 Days</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>

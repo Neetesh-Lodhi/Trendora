@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
 import NewsletterBox from "../components/NewsletterBox";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Contact = () => {
+  const [showModal, setShowModal] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 relative">
       {/* ---------- Title Section ---------- */}
       <div className="text-center pt-16 border-t pb-4">
         <Title text1={"CONTACT"} text2={"US"} />
@@ -70,7 +72,10 @@ const Contact = () => {
               innovation, and collaboration? Join our vibrant Trendora family.
             </p>
 
-            <button className="relative border border-black px-8 py-3 text-sm font-medium overflow-hidden rounded-lg group">
+            <button
+              onClick={() => setShowModal(true)}
+              className="relative border border-black px-8 py-3 text-sm font-medium overflow-hidden rounded-lg group"
+            >
               <span className="absolute inset-0 bg-black transition-transform duration-500 transform -translate-x-full group-hover:translate-x-0"></span>
               <span className="relative text-black group-hover:text-white transition-colors duration-500">
                 Explore Jobs
@@ -91,6 +96,47 @@ const Contact = () => {
         <span className="font-medium">Trendora</span> — Crafted with ❤️ and
         passion for our customers.
       </p>
+
+      {/* ---------- Modal ---------- */}
+      <AnimatePresence>
+        {showModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                className="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 text-center max-w-md w-full mx-4"
+              >
+                <h3 className="text-2xl font-semibold text-gray-800 mb-3">
+                   We’re Hiring at Trendora!
+                </h3>
+                <p className="text-gray-600 leading-relaxed mb-6">
+                  Excited to be part of our creative journey? Send your resume
+                  to{" "}
+                  <span className="text-rose-500 font-medium">
+                    careers@trendora.com
+                  </span>{" "}
+                  and let’s grow together!
+                </p>
+
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-2 rounded-full transition-all duration-300 shadow-md"
+                >
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

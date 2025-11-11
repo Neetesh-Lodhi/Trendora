@@ -1,37 +1,40 @@
 import React, { useState } from "react";
-import { assets } from "../assets/assets";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 import { backendUrl } from "../App";
-import {toast} from "react-toastify";
+import { assets } from "../assets/assets";
+import { Upload, Star } from "lucide-react";
 
-const Add = ({token}) => {
-  const [image1, setImage1] = useState("false");
-  const [image2, setImage2] = useState("false");
-  const [image3, setImage3] = useState("false");
-  const [image4, setImage4] = useState("false");
-
+const Add = ({ token }) => {
+  const [images, setImages] = useState([null, null, null, null]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Men");
   const [subCategory, setSubCategory] = useState("Topwear");
   const [sizes, setSizes] = useState([]);
-  const [bestseller, setBestseller] = useState("false");
+  const [bestseller, setBestseller] = useState(false);
 
+  const handleImageChange = (index, file) => {
+    const updated = [...images];
+    updated[index] = file;
+    setImages(updated);
+  };
 
+  const toggleSize = (size) => {
+    setSizes((prev) =>
+      prev.includes(size)
+        ? prev.filter((item) => item !== size)
+        : [...prev, size]
+    );
+  };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
     try {
-    
       const formData = new FormData();
-      image1 && formData.append("image1", image1);
-     image2 && formData.append("image2", image2);
-    image3 &&  formData.append("image3", image3);
-     image4 && formData.append("image4", image4);
+      images.forEach((img, i) => img && formData.append(`image${i + 1}`, img));
       formData.append("name", name);
       formData.append("price", price);
       formData.append("description", description);
@@ -39,278 +42,191 @@ const Add = ({token}) => {
       formData.append("subCategory", subCategory);
       formData.append("sizes", JSON.stringify(sizes));
       formData.append("bestseller", bestseller);
-    
-        const response = await axios.post(
-          backendUrl + "/api/product/add",
-          formData, { headers: {token} }
-        );
-      
+
+      const response = await axios.post(
+        backendUrl + "/api/product/add",
+        formData,
+        {
+          headers: { token },
+        }
+      );
+
       if (response.data.success) {
-        toast.success(response.data.message);  
-        setName('')
-        setDescription('')
-        setImage1(false);
-        setImage2(false);
-        setImage3(false);
-        setImage4(false);
-         setPrice('')  
-      } else {
-           toast.error(response.data.message);  
-      }
-      
-  } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-  }
-  }
+        toast.success("Product added successfully 🎉");
+        setName("");
+        setDescription("");
+        setPrice("");
+        setImages([null, null, null, null]);
+        setSizes([]);
+        setBestseller(false);
+      } else toast.error(response.data.message);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    }
+  };
+
+  const inputStyle =
+    "w-full max-w-[500px] px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition";
 
   return (
-    <form onSubmit={onSubmitHandler } className="flex flex-col w-full items-start gap-3">
+    <motion.form
+      onSubmit={onSubmitHandler}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col gap-5 w-full max-w-2xl mx-auto"
+    >
+      <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+        🛍️ Add New Product
+      </h2>
+
+      {/* Image Upload Section */}
       <div>
-        <p classnmae="mb-2">Upload Image</p>
-
-        <div className="flex gap-2">
-          <label htmlFor="image1">
-            <img
-              className="w-20"
-              src={
-                image1 && image1 instanceof File
-                  ? URL.createObjectURL(image1)
-                  : assets.upload_area
-              }
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage1(e.target.files[0])}
-              type="file"
-              id="image1"
-              hidden
-            />
-          </label>
-
-          <label htmlFor="image2">
-            <img
-              className="w-20"
-              src={
-                image2 && image2 instanceof File
-                  ? URL.createObjectURL(image2)
-                  : assets.upload_area
-              }
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage2(e.target.files[0])}
-              type="file"
-              id="image2"
-              hidden
-            />
-          </label>
-
-          <label htmlFor="image3">
-            <img
-              className="w-20"
-              src={
-                image3 && image3 instanceof File
-                  ? URL.createObjectURL(image3)
-                  : assets.upload_area
-              }
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage3(e.target.files[0])}
-              type="file"
-              id="image3"
-              hidden
-            />
-          </label>
-
-          <label htmlFor="image4">
-            <img
-              className="w-20"
-              src={
-                image4 && image4 instanceof File
-                  ? URL.createObjectURL(image4)
-                  : assets.upload_area
-              }
-              alt=""
-            />
-            <input
-              onChange={(e) => setImage4(e.target.files[0])}
-              type="file"
-              id="image4"
-              hidden
-            />
-          </label>
+        <p className="font-medium mb-2">Upload Images</p>
+        <div className="flex flex-wrap gap-3">
+          {images.map((img, index) => (
+            <label
+              key={index}
+              htmlFor={`image${index}`}
+              className="relative w-24 h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center hover:border-indigo-400 hover:bg-indigo-50 transition cursor-pointer group"
+            >
+              {img ? (
+                <img
+                  src={URL.createObjectURL(img)}
+                  alt={`preview-${index}`}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              ) : (
+                <div className="text-gray-400 flex flex-col items-center gap-1">
+                  <Upload size={20} className="group-hover:text-indigo-500" />
+                  <span className="text-xs">Upload</span>
+                </div>
+              )}
+              <input
+                onChange={(e) => handleImageChange(index, e.target.files[0])}
+                type="file"
+                id={`image${index}`}
+                hidden
+              />
+            </label>
+          ))}
         </div>
       </div>
 
-      <div className="w-full">
-        <p>Product name</p>
+      {/* Name & Description */}
+      <div>
+        <p className="font-medium mb-1">Product Name</p>
         <input
-          onChange={(e) => setName(e.target.value)}
           value={name}
-          className="w-full max-w-[500px] px-3 py-2"
-          type="text"
-          placeholder="Type here"
+          onChange={(e) => setName(e.target.value)}
+          className={inputStyle}
+          placeholder="Enter product name"
           required
         />
       </div>
 
-      <div className="w-full">
-        <p>Product Description</p>
+      <div>
+        <p className="font-medium mb-1">Description</p>
         <textarea
-          onChange={(e) => setDescription(e.target.value)}
           value={description}
-          className="w-full max-w-[500px] px-3 py-2"
-          type="text"
-          placeholder="Write Content here"
+          onChange={(e) => setDescription(e.target.value)}
+          className={`${inputStyle} h-24`}
+          placeholder="Write product description"
           required
         />
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 w-full sm:gap-8 ">
-        <div>
-          <p className="mb-2">Product Category</p>
+      {/* Dropdowns */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <p className="font-medium mb-1">Category</p>
           <select
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3 py-2"
+            className={inputStyle}
           >
             <option value="Men">Men</option>
             <option value="Women">Women</option>
             <option value="Kids">Kids</option>
           </select>
         </div>
-
-        <div>
-          <p className="mb-2">Sub Category</p>
+        <div className="flex-1">
+          <p className="font-medium mb-1">Sub Category</p>
           <select
             onChange={(e) => setSubCategory(e.target.value)}
-            className="w-full px-3 py-2"
+            className={inputStyle}
           >
             <option value="Topwear">Topwear</option>
             <option value="Bottomwear">Bottomwear</option>
             <option value="Winterwear">Winterwear</option>
           </select>
         </div>
-
-        <div>
-          <p className="mb-2">Producr Price</p>
-          <input
-            onChange={(e) => setPrice(e.target.value)}
-            value={price}
-            className="w-full px-3 py-2 sm:w-[120px] "
-            type="Number"
-            placeholder="25"
-          />
-        </div>
       </div>
 
+      {/* Price */}
+      <div className="flex-1">
+        <p className="font-medium mb-1">Price (₹)</p>
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          className={inputStyle}
+          placeholder="Eg: 499"
+          required
+        />
+      </div>
+
+      {/* Sizes */}
       <div>
-        <p className="mb-2">Product Sizes</p>
-        <div className="flex gap-3">
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("S")
-                  ? prev.filter(item => item !== "S")
-                  : [...prev, "S"]
-              )
-            }
-          >
-            <p
-              className={`${
-                sizes.includes("S") ? "bg-pink-100" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
+        <p className="font-medium mb-2">Available Sizes</p>
+        <div className="flex gap-3 flex-wrap">
+          {["S", "M", "L", "XL", "XXL"].map((size) => (
+            <motion.button
+              key={size}
+              type="button"
+              onClick={() => toggleSize(size)}
+              whileTap={{ scale: 0.9 }}
+              className={`px-4 py-1 rounded-lg text-sm font-medium ${
+                sizes.includes(size)
+                  ? "bg-indigo-500 text-white shadow-md"
+                  : "bg-gray-100 text-gray-700"
+              } transition`}
             >
-              S
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("M")
-                  ? prev.filter(item => item !== "M")
-                  : [...prev, "M"]
-              )
-            }
-          >
-            <p
-              className={`${
-                sizes.includes("M") ? "bg-pink-100" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              M
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("L")
-                  ? prev.filter(item => item !== "L")
-                  : [...prev, "L"]
-              )
-            }
-          >
-            <p
-              className={`${
-                sizes.includes("L") ? "bg-pink-100" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              L
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("XL")
-                  ? prev.filter(item => item !== "XL")
-                  : [...prev, "XL"]
-              )
-            }
-          >
-            <p
-              className={`${
-                sizes.includes("XL") ? "bg-pink-100" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              XL
-            </p>
-          </div>
-
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("XXL")
-                  ? prev.filter(item => item !== "XXL")
-                  : [...prev, "XXL"]
-              )
-            }
-          >
-            <p
-              className={`${
-                sizes.includes("XXL") ? "bg-pink-100" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              XXL
-            </p>
-          </div>
+              {size}
+            </motion.button>
+          ))}
         </div>
       </div>
 
-      <div className="flex gap-2 mt-2">
-        <input onChange={() => setBestseller(prev => !prev)} checked={bestseller} type="checkbox" id="bestseller" />
-        <label className="cursor-pointer" htmlFor="bestseller">
-          Add to bestseller
+      {/* Bestseller */}
+      <div className="flex items-center gap-2 mt-2">
+        <input
+          type="checkbox"
+          id="bestseller"
+          checked={bestseller}
+          onChange={() => setBestseller((prev) => !prev)}
+          className="accent-indigo-500 cursor-pointer"
+        />
+        <label htmlFor="bestseller" className="cursor-pointer text-gray-700">
+          <Star
+            size={16}
+            className={`inline mr-1 ${
+              bestseller ? "text-yellow-500" : "text-gray-400"
+            }`}
+          />
+          Mark as Bestseller
         </label>
       </div>
 
-      <button type="submit" className="w-28 py-3 mt-4 bg-black text-white">
-        ADD
-      </button>
-    </form>
+      {/* Submit Button */}
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        type="submit"
+        className="mt-4 w-full sm:w-40 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-semibold shadow-lg hover:opacity-90 transition"
+      >
+        ➕ Add Product
+      </motion.button>
+    </motion.form>
   );
 };
 
