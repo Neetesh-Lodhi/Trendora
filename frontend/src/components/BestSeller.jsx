@@ -12,7 +12,7 @@ const BestSeller = () => {
 
     // fallback if no bestseller products found
     if (bestProduct.length === 0) {
-      bestProduct = products.slice(0, 5);
+      bestProduct = products.slice(0, 6);
     }
 
     setBestSeller(bestProduct);

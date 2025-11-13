@@ -60,6 +60,8 @@ import logo4 from "./logo4.png";
 import logo2 from './logo2.png'
 
 import hero_img from './hero_img.png'
+import hero_img3 from "./hero_img3.png";
+
 import cart_icon from './cart_icon.png'
 import bin_icon from './bin_icon.png'
 import dropdown_icon from './dropdown_icon.png'
@@ -78,27 +80,28 @@ import stripe_logo from './stripe_logo.png'
 import cross_icon from './cross_icon.png'
 
 export const assets = {
-    logo,
-    logo2,
-    logo4,
-    hero_img,
-    cart_icon,
-    dropdown_icon,
-    exchange_icon,
-    profile_icon,
-    quality_icon,
-    search_icon,
-    star_dull_icon,
-    star_icon,
-    bin_icon,
-    support_img,
-    menu_icon,
-    about_img,
-    contact_img,
-    razorpay_logo,
-    stripe_logo,
-    cross_icon
-}
+  logo,
+  logo2,
+  logo4,
+  hero_img,
+  hero_img3,
+  cart_icon,
+  dropdown_icon,
+  exchange_icon,
+  profile_icon,
+  quality_icon,
+  search_icon,
+  star_dull_icon,
+  star_icon,
+  bin_icon,
+  support_img,
+  menu_icon,
+  about_img,
+  contact_img,
+  razorpay_logo,
+  stripe_logo,
+  cross_icon,
+};
 
 export const products = [
     {
@@ -663,7 +666,7 @@ export const products = [
         subCategory: "Bottomwear",
         sizes: ["S", "M", "L", "XL"],
         date: 1716662945448,
-        bestseller: false
+        bestseller: true
     },
     {
         _id: "aaabv",
@@ -687,7 +690,7 @@ export const products = [
         subCategory: "Bottomwear",
         sizes: ["S", "M", "L", "XL"],
         date: 1716665145448,
-        bestseller: false
+        bestseller: true
     },
     {
         _id: "aaabx",
@@ -698,7 +701,7 @@ export const products = [
         category: "Kids",
         subCategory: "Bottomwear",
         sizes: ["S", "M", "L", "XL"],
-        date: 1716666245448, bestseller: false
+        date: 1716666245448, bestseller: true
     },
     {
         _id: "aaaby",
@@ -710,7 +713,7 @@ export const products = [
         subCategory: "Winterwear",
         sizes: ["S", "M", "L", "XL"],
         date: 1716667345448,
-        bestseller: false
+        bestseller: true
     },
     {
         _id: "aaabz",
@@ -722,7 +725,7 @@ export const products = [
         subCategory: "Winterwear",
         sizes: ["S", "M", "L", "XL"],
         date: 1716668445448,
-        bestseller: false
+        bestseller: true
     }
 
 ]

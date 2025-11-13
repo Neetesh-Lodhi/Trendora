@@ -9,7 +9,7 @@ const Login = () => {
   const [currentState, setCurrentState] = useState("Login");
   const { setToken, backendUrl } = useContext(ShopContext);
   const navigate = useNavigate();
-
+  
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");

@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
 import NewsletterBox from "../components/NewsletterBox";
@@ -33,42 +32,29 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-pink-50/40 to-gray-50 text-gray-800 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-white via-pink-50/40 to-gray-50 text-gray-800">
       {/* Header Section */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-3xl sm:text-4xl text-center pt-10 border-t border-gray-200"
-      >
+      <div className="text-3xl sm:text-4xl text-center pt-10 border-t border-gray-200">
         <Title text1={"ABOUT"} text2={"US"} />
-      </motion.div>
+      </div>
 
-      {/* About Content */}
+      {/* About Section */}
       <div className="my-16 flex flex-col md:flex-row gap-12 items-center justify-center px-6 md:px-16">
-        {/* Animated Image */}
-        <motion.img
-          initial={{ opacity: 0, scale: 0.9, x: -40 }}
-          whileInView={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
+        {/* Image */}
+        <img
           className="w-full md:max-w-[420px] rounded-2xl shadow-lg hover:shadow-2xl transition-transform duration-300 hover:scale-105"
           src={assets.about_img}
           alt="About Us"
         />
 
-        {/* Animated Text */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-          className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600 leading-relaxed"
-        >
+        {/* Text */}
+        <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600 leading-relaxed">
           <p className="text-lg">
             We are a passionate team dedicated to building products that make
             life simpler and smarter. Our journey began with a mission to
             deliver <span className="font-semibold text-pink-500">quality</span>
-            ,<span className="font-semibold text-pink-500"> trust</span>, and
-            <span className="font-semibold text-pink-500"> innovation</span> —
+            , <span className="font-semibold text-pink-500">trust</span>, and
+            <span className="font-semibold text-pink-500">innovation</span> —
             and we’ve stayed true to it ever since.
           </p>
 
@@ -78,12 +64,9 @@ const About = () => {
             gap between technology and everyday needs.
           </p>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-          >
+          <div className="transition-transform duration-300 hover:scale-[1.02]">
             <h3 className="text-2xl font-semibold text-gray-800 mt-4 mb-2">
-              Our Mission 
+              Our Mission
             </h3>
             <p>
               To empower individuals and businesses by providing seamless
@@ -91,8 +74,8 @@ const About = () => {
               creativity. We strive to redefine convenience through modern
               solutions that truly matter.
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
 
       {/* Why Choose Us Section */}
@@ -106,16 +89,9 @@ const About = () => {
       {/* Feature Cards */}
       <div className="flex flex-col md:flex-row flex-wrap justify-center items-stretch gap-8 px-6 md:px-16 my-12">
         {features.map((item, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0px 8px 25px rgba(0,0,0,0.1)",
-            }}
-            transition={{ duration: 0.4 }}
-            className={`p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center text-center gap-4 w-full md:w-[45%] lg:w-[22%] border border-gray-200 bg-white cursor-pointer`}
+            className={`p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center gap-4 w-full md:w-[45%] lg:w-[22%] border border-gray-200 bg-white cursor-pointer transform hover:-translate-y-2`}
           >
             <div
               className={`w-20 h-20 ${item.bgColor} rounded-full flex items-center justify-center shadow-md`}
@@ -124,19 +100,14 @@ const About = () => {
             </div>
             <b className="text-lg text-gray-800">{item.title}</b>
             <p className="text-gray-600 text-sm sm:text-base">{item.desc}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       {/* Newsletter Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9 }}
-        className="mt-20 mb-10"
-      >
+      <div className="mt-20 mb-10">
         <NewsletterBox />
-      </motion.div>
+      </div>
     </div>
   );
 };
