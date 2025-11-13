@@ -6,6 +6,7 @@ import axios from "axios";
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
+<<<<<<< HEAD
   const currency = "$";
   const delivery_fee = 10;
   const backendUrl =
@@ -17,6 +18,12 @@ const ShopContextProvider = (props) => {
   const [latestProducts, setLatestProducts] = useState([]);
   const [token, setToken] = useState("");
   const navigate = useNavigate();
+=======
+     const currency = '$';
+     const delivery_fee = 10;
+     const backendUrl = "https://trendora-e-commerce-app.onrender.com"
+     //  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+>>>>>>> 23157bc8b73c1ff3040ecc7840e53d3af234aa59
 
   // 🛒 Add to Cart
   const addToCart = async (itemId, size) => {
